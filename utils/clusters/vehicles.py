@@ -3,7 +3,7 @@ import re
 from utils.ocr_processor import extract_rotuled_data
 from utils.regex_constants import RegexConstants
 
-def vehicles(text: str) -> dict:
+def get_vehicle_data(text: str) -> dict:
     vehicles_found = []
     vehicle_patterns = [
         RegexConstants.VEHICLE_PLATE,

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from utils.ocr_processor import read_pdf, read_ocr
 from utils.file_handler import get_file
-from utils.clusters.vehicles import vehicles
+from utils.clusters.vehicles import get_vehicle_data
 
 pdf_router = APIRouter()
 
