@@ -10,7 +10,7 @@ from paddleocr import PaddleOCR
 
 import cv2
 import json
-
+import os
 import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
