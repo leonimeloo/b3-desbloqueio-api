@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+import logging
+from fastapi import APIRouter, UploadFile, File
 from sqlalchemy.orm import Session
 
 from utils.ocr_processor import read_pdf, read_ocr
@@ -30,15 +31,15 @@ def process_pdf():
         if not text:
             text = read_ocr(file)  # Faz uma leitura um pouco mais avançada e precisa para documentos robustos
             
-        return jsonify({
+        return{
             'text': text
-        }), 200
+        }, 200
     except Exception as e:
         logging.error(f'{"[PROCESS]"} error processing file: {e}')
-        return jsonify({
+        return {
             'message': 'error processing file',
             'error': str(e)
-        }), 500
+        }, 500
         
 @pdf_router.post("/vehicles")
 async def vehicles(file: UploadFile = File(...)):
