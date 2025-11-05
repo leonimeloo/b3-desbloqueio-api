@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy
+psycopg2-binary
+pypdf
+pdf2image
+pytesseract
+paddlepaddle
+paddleocr
+numpy
+gliner
