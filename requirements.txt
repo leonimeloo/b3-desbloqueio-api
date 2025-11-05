@@ -10,3 +10,4 @@ paddleocr
 numpy
 gliner
 python-multipart
+openai==0.28

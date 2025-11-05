@@ -11,6 +11,10 @@ from paddleocr import PaddleOCR
 import cv2
 import json
 
+import openai
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 def read_pdf(read_file: bytes) -> Optional[str]:
     '''
     Extrai o texto selecionável de um arquivo PDF.
@@ -139,20 +143,68 @@ def ordenar_e_agrupar_texto(ocr_result):
     
     return final_text
 
+# def extract_rotuled_data(text: str, labels: List[str]) -> List[str]:
+#     model = GLiNER.from_pretrained("urchade/gliner_base")
+#     entities = model.predict_entities(text, labels)
+#     people_set = set()
+
+#     people = []
+
+#     for item in entities:
+#         text = item["text"]
+#         label = item["label"]
+#         text_lower = text.lower()
+
+#         if label == "Person" and text_lower not in people_set:
+#             people_set.add(text_lower)
+#             people.append(text)
+
+#     return people
+
 def extract_rotuled_data(text: str, labels: List[str]) -> List[str]:
-    model = GLiNER.from_pretrained("urchade/gliner_base")
-    entities = model.predict_entities(text, labels)
-    people_set = set()
+    structure = {
+        "name": "verificar_pessoas",
+        "description": "Identifique e retorne todas as pessoas (Nome completo) mencionadas no texto.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "nome": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Nome completo da pessoa"
+                },
+            },
+            "required": ["nome"],
+            "additionalProperties": False
+        }
+    }
+    
+    system_prompt = (
+        "Extraia todas as pessoas mencionados no texto, inclusive o NOME DO FINANCIADO."
+        "Retorne um dicionário JSON com uma lista contendo: 'Nome completo da pessoa'."
+    )
 
-    people = []
+    user_prompt = f"Extraia os dados mencionados.\n\nTexto:\n{text}"
 
-    for item in entities:
-        text = item["text"]
-        label = item["label"]
-        text_lower = text.lower()
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        functions=[structure],
+        function_call={"name": "verificar_pessoas"},
+        temperature=0.0
+    )
+    
+    arguments = response['choices'][0]['message']['function_call']['arguments']
 
-        if label == "Person" and text_lower not in people_set:
-            people_set.add(text_lower)
-            people.append(text)
+    try:
+        structured_data = json.loads(arguments)["nome"]
+        logging.info(f"[EXTRACT] Pessoas extraídas: {arguments} - data: {structured_data}")
+    except Exception:
+        structured_data = []
 
-    return people
+    return structured_data
