@@ -1,10 +1,9 @@
+import uvicorn
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils.db import Base, engine
-from routes import pdf_router
-
-Base.metadata.create_all(bind=engine)
+from routes.pdf_router import pdf_router
 
 app = FastAPI()
 

@@ -9,3 +9,4 @@ paddlepaddle
 paddleocr
 numpy
 gliner
+python-multipart
