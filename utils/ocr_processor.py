@@ -2,7 +2,7 @@ import io
 from pypdf import PdfReader
 from pdf2image import convert_from_bytes
 import numpy as np
-import pytesseract
+#import pytesseract
 from typing import List, Tuple, Dict, Optional
 import logging
 from gliner import GLiNER
@@ -35,7 +35,7 @@ def read_pdf(read_file: bytes) -> Optional[str]:
             logging.error(f'Erro: {e}')
             return None
         
-def read_ocr(read_file: bytes) -> Optional[str]:
+def tesseract_read_ocr(read_file: bytes) -> Optional[str]:
     '''
     Extrai o texto de um arquivo PDF utilizando OCR.
     '''
@@ -48,7 +48,7 @@ def read_ocr(read_file: bytes) -> Optional[str]:
 
     return '\n'.join(final_text)
 
-def paddle_read_ocr(read_file: bytes) -> Optional[str]:
+def read_ocr(read_file: bytes) -> Optional[str]:
     images = convert_from_bytes(read_file)
 
     ocr = PaddleOCR(use_doc_orientation_classify=False,use_doc_unwarping=False,use_textline_orientation=False)
@@ -57,10 +57,7 @@ def paddle_read_ocr(read_file: bytes) -> Optional[str]:
     for img in images:
         img_np = np.array(img)
         result = ocr.predict(img_np)
-        if isinstance(result, dict) and "res" in result and "rec_texts" in result["res"]:
-            texts = result["res"]["rec_texts"]
-            page_text = "\n".join(texts)
-            final_text += page_text + "\n\n"
+        final_text += '\n'.join(result[0]['rec_texts'])
 
     return final_text
 
