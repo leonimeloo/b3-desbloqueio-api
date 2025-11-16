@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+SQLAlchemy
+psycopg2-binary
+pypdf
+pdf2image
+pytesseract
+paddlepaddle
+paddleocr
+numpy
+gliner
+python-multipart
+openai==0.28
+transformers

@@ -1,0 +1,10 @@
+.env
+venv
+__pycache__/
+*/__pycache__
+env.sh
+*.json
+*.pdf
+
+tests/
+init.sh
