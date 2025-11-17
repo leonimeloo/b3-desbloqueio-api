@@ -104,30 +104,8 @@ class LegalRepresentationCluster:
                 "data_validade": data_validade
             }
         }
-        
+
     @staticmethod
-    def validate_field(field, extracted, expected, validations, failed_fields):
-        '''
-        Valida um único campo que está presente em expected_data.
-        Retorna True se aprovado, False caso contrário.
-        Registra em validations e failed_fields.
-        '''
-        expected_value = expected[field]
-        extracted_value = extracted.get(field)
-
-        is_valid = (extracted_value is not None) and (extracted_value == expected_value)
-
-        validations[field] = {
-            'approved': is_valid,
-            'expected': expected_value,
-            'extracted': extracted_value,
-        }
-
-        if not is_valid:
-            failed_fields.append(field)
-
-        return is_valid
-    
     def run_checks(extracted_data: dict, expected_data: dict) -> dict:
         '''Executa as validações relacionadas a veículos.'''
         
