@@ -31,8 +31,11 @@ class RegistrationProofCluster:
             "telefone": telefone,
         }
 
-    def run_checks():
+    def run_checks(extracted_data: dict, expected_data: dict) -> dict:
         '''Executa as validações relacionadas ao comprovante de registro.'''
-        return {
-            'valid_registration_number': self.validate_registration_number(),
-        }
+        
+        validations = {}
+        failed_fields = []
+        approved = True #começa com aprovado, se houve alguma falha muda pra false
+        
+        return {}

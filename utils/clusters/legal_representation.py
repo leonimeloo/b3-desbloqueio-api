@@ -104,7 +104,85 @@ class LegalRepresentationCluster:
                 "data_validade": data_validade
             }
         }
+        
+    @staticmethod
+    def validate_field(field, extracted, expected, validations, failed_fields):
+        '''
+        Valida um único campo que está presente em expected_data.
+        Retorna True se aprovado, False caso contrário.
+        Registra em validations e failed_fields.
+        '''
+        expected_value = expected[field]
+        extracted_value = extracted.get(field)
+
+        is_valid = (extracted_value is not None) and (extracted_value == expected_value)
+
+        validations[field] = {
+            'approved': is_valid,
+            'expected': expected_value,
+            'extracted': extracted_value,
+        }
+
+        if not is_valid:
+            failed_fields.append(field)
+
+        return is_valid
     
-    def run_checks():
+    def run_checks(extracted_data: dict, expected_data: dict) -> dict:
         '''Executa as validações relacionadas a veículos.'''
-        return {}
+        
+        validations = {}
+        failed_fields = []
+        approved = True #começa com aprovado, se houve alguma falha muda pra false
+        
+        # Trocar pela função validate_field para os campos simples
+        
+        if 'cnpj' in expected_data:
+            is_cnpj_valid = expected_data.get('cnpj') in extracted_data.get('cnpj', [])
+            validations['cnpj'] = {
+                'approved': is_cnpj_valid,
+                'expected': expected_data.get('cnpj', ''),
+                'extracted': extracted_data.get('cnpj', ''),
+            }
+            if not is_cnpj_valid:
+                failed_fields.append('cnpj')
+                approved = False
+
+        if 'cnpj_agente' in expected_data:
+            is_cnpj_agente_valid = extracted_data.get('cnpj_agente') == expected_data.get('cnpj_agente')
+            validations['cnpj_agente'] = {
+                'approved': is_cnpj_agente_valid,
+                'expected': expected_data.get('cnpj_agente', ''),
+                'extracted': extracted_data.get('cnpj_agente', ''),
+            }
+            if not is_cnpj_agente_valid:
+                failed_fields.append('cnpj_agente')
+                approved = False
+                
+        if 'data_validade' in expected_data:
+            is_data_validade_valid = extracted_data.get('datas', {}).get('data_validade') == expected_data.get('data_validade')
+            validations['data_validade'] = {
+                'approved': is_data_validade_valid,
+                'expected': expected_data.get('data_validade', ''),
+                'extracted': extracted_data.get('datas', {}).get('data_validade', ''),
+            }
+            if not is_data_validade_valid:
+                failed_fields.append('data_validade')
+                approved = False
+                
+        if 'assinatura' in extracted_data:
+            is_assinatura_valid = extracted_data.get('assinatura', False) is True
+            validations['assinatura'] = {
+                'approved': is_assinatura_valid,
+                'expected': True,
+                'extracted': extracted_data.get('assinatura', False),
+            }
+            if not is_assinatura_valid:
+                failed_fields.append('assinatura')
+                approved = False
+        
+        return {
+            'approved': approved,
+            'failed_fields': failed_fields,
+            'validations': validations
+        }

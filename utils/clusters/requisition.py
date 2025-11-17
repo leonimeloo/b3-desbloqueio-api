@@ -33,6 +33,11 @@ class RequisitionCluster:
             'direcionamento_detran': direcionamento_detran,
         }
     
-    def run_checks():
+    def run_checks(extracted_data: dict, expected_data: dict) -> dict:
         '''Executa as validações relacionadas a requisições.'''
+        
+        validations = {}
+        failed_fields = []
+        approved = True #começa com aprovado, se houve alguma falha muda pra false
+        
         return {}
